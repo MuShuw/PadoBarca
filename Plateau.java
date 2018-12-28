@@ -180,6 +180,7 @@ public class Plateau {
 			Depart.setPion();
 			return 0;
 		}
+		System.out.println("Mouvement impossible");
 		return 1; // TODO peut-etre utile de recupere une valeur pour plus tard
 	}
 	public void movePion(int xd, int yd, int xa, int ya){

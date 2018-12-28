@@ -1,5 +1,5 @@
 
-public class Lion extends Pion {
+public class Lion extends Pion implements MvtDiag {
 
 	public Lion(String Col) {
 		super(Col);
@@ -15,6 +15,10 @@ public class Lion extends Pion {
 	}
 	public void setType() {
 		Type = "Lion";
+	}
+	public boolean canMove(int xd, int yd, int xa, int ya){
+		if ( Math.abs(xa-xd) == Math.abs(ya-yd) ) return true;
+		return false;
 	}
 }
 

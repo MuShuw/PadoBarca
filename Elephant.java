@@ -1,5 +1,5 @@
 
-public class Elephant extends Pion {
+public class Elephant extends Pion implements MvtVertHori, MvtDiag {
 
 	public Elephant(String Col) {
 		super(Col);
@@ -16,5 +16,12 @@ public class Elephant extends Pion {
 	public void setType() {
 		Type = "Elephant";
 	}
+
+	public boolean canMove(int xd, int yd, int xa, int ya) {
+		if ( Math.abs(xa-xd) == Math.abs(ya-yd) ) return true;
+		else if ( xd == xa || yd == ya ) return true;
+		return false;
+	}
+	
 }
 
