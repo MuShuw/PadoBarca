@@ -1,14 +1,14 @@
 
-public abstract class Pion {
+public abstract class Pion implements Mouvement {
 	String Type;
 	String Col;
-	boolean paralyse;
-	static final int CercleDeLaVie = 0; // mettre le graphe de bouffe
-	
+	boolean EtatParalysie;
+	private Vertex Paralyse;
 
 	public Pion(String col) {
 		setCol(col);	
-		setParalyse(false);
+		setEtatParalysie(false);
+		setParalyse(null);
 	}
 
 	/** 
@@ -23,11 +23,21 @@ public abstract class Pion {
 		this.Col = Col;
 	}
 
-	public boolean isParalysed() {
-		return paralyse;
+	public boolean isEtatParalysie() {
+		return EtatParalysie;
 	}
 
-	public void setParalyse(boolean paralyse) {
-		this.paralyse = paralyse;
+	public void setEtatParalysie(boolean paralyse) {
+		this.EtatParalysie = paralyse;
 	}
+
+	public Vertex getParalyse() {
+		return Paralyse;
+	}
+
+	public void setParalyse(Vertex paralyse) {
+		Paralyse = paralyse;
+	}
+	
+//	public abstract static Vertex setParalyse();
 }
