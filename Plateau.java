@@ -250,6 +250,7 @@ public class Plateau {
 		return emptyRoad(xd, yd, xa, ya);
 	}
 	private boolean emptyRoad(int xd, int yd, int xa, int ya) {
+		Pion VeutBouger = this.cases[xd][yd].getPion();
 		int DirectionY;
 		int DirectionX;
 		if ( ( ya - yd) != 0) DirectionY = (ya - yd)/Math.abs(ya - yd);
@@ -257,8 +258,9 @@ public class Plateau {
 		if ( ( xa - xd) != 0) DirectionX = (ya - yd)/Math.abs(ya - yd);
 		else DirectionX = 0;
 		int i = xd+DirectionX, j = yd+DirectionY;
+		if ( isRoadBlocked(xd, yd, VeutBouger) ) return false;
 		while ( ( DirectionX !=0 && i != xa ) || ( DirectionY != 0 &&j != ya) ){
-			if ( this.cases[j][i].contientPion() ){
+			if ( this.cases[j][i].contientPion() || isRoadBlocked(j, i, VeutBouger) ){
 				return false;
 			}
 			i += DirectionX; j += DirectionY;
@@ -277,10 +279,15 @@ public class Plateau {
 					continue;
 				}
 				else if ( this.cases[x+j][y+i].contientPion() ){
-					if ( pion.getType() == this.cases[x+j][y+i].getPion().getParalyse().getBloque())
+					Pion PionCroise = this.cases[x+j][y+i].getPion();
+					String cible = PionCroise.getParalyse().getBloque().getType();
+					if ( pion.getType() == cible && 
+							pion.getCol() != PionCroise.getCol()) return true;
 				}
+				else continue;
 			}
 		}	
+		return false;
 	}	
 	/** 
 	 * Classe interne Cases contenant les infos sur une case d'un plateau
@@ -458,7 +465,7 @@ public class Plateau {
 					+MonPlateau.PionBlancs[i].getPion().getParalyse().getBloque().getType());
 		}
 //		boolean test = MonPlateau.cases[5][5].getPion().canMove(5, 5, 3, 3);
-		System.out.print(MonPlateau.getCases()[-1][-1]);
+//		System.out.print(MonPlateau.getCases()[-1][-1]);
 		
 	}
 }

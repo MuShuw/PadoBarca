@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -8,26 +9,25 @@ import javax.swing.JToolBar;
 
 
 public class BarcaGUI {
-	private static final JPanel GUI = new JPanel(new BorderLayout(3, 3));
+	private static final JPanel GUI = new JPanel(new BorderLayout(100, 100));
 	
 	public BarcaGUI() {
-		GUI.setBounds(5, 5, 5, 5);
+		GUI.setBounds(500, 5, 5, 5);
 		JToolBar BarDoutil = new JToolBar();
-		GUI.add(BarDoutil, BorderLayout.NORTH);
-		JToolBar plop = new JToolBar();
-		GUI.add(plop, BorderLayout.EAST);
+        BarDoutil.setFloatable(false);
+		GUI.add(BarDoutil, BorderLayout.SOUTH);
 		
 		BarDoutil.add(new JButton("New Game")); // TODO - add functionality!
-        BarDoutil.addSeparator();
+        BarDoutil.addSeparator(new Dimension(20, 20));
         BarDoutil.add(new JButton("Save")); // TODO - add functionality!
-        BarDoutil.addSeparator();
+        BarDoutil.addSeparator(new Dimension(1, 1));
         BarDoutil.add(new JButton("Restore")); // TODO - add functionality!
-        BarDoutil.addSeparator();
+        BarDoutil.addSeparator(new Dimension(1, 1));
         BarDoutil.add(new JButton("Resign")); // TODO - add functionality!
-        BarDoutil.addSeparator();
+        BarDoutil.addSeparator(new Dimension(1, 1));
         
         
-        JPanel chessBoard = new JPanel(new BorderLayout(0, 9));
+        JPanel chessBoard = new JPanel(new BorderLayout(500, 500));
 	}
 	
     public final JComponent getGui() {
@@ -44,7 +44,7 @@ public class BarcaGUI {
 	    f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	    // See http://stackoverflow.com/a/7143398/418556 for demo.
 	    f.setLocationByPlatform(true);
-	 // ensures the frame is the minimum size it needs to be
+	    // ensures the frame is the minimum size it needs to be
         // in order display the components within it
         f.pack();
         // ensures the minimum size is enforced.
