@@ -7,8 +7,8 @@ public class Souris extends Pion implements MvtVertHori {
 		// TODO Auto-generated constructor stub
 	}
 
-	/** Getter et setter pour les attributs de Pion
-	 * 
+	/** 
+	 * Getter et setter pour les attributs de Pion
 	 */
 	public String getType() {
 		return Type;

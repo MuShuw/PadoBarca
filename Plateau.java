@@ -1,10 +1,12 @@
+import java.util.Map;
+
 import javax.naming.directory.DirContext;
 
 // Cette classe cree des objets avec lesquelles les joeurs peuvent interagir 
 public class Plateau {
-	Cases[][] cases;
-	int Larg;
-	int Haut;
+	protected Cases[][] cases;
+	protected int Larg;
+	protected int Haut;
 	Cases[] PionNoirs = new Cases[6]; // TODO rendre le nombre de pions modulable
 	Cases[] PionBlancs = new Cases[6]; // Est la pour le bot
 	Player AlaMain;
@@ -19,22 +21,35 @@ public class Plateau {
 		this(10,10);
 	}
 	/** 
+	 * Creation du plateau avec 2 entiers, appelle la creation de plateau avec congifguration
+	 */
+	public Plateau(int i, int j) {
+		this(new Config(10, 10));
+	}
+	/** 
 	 * Creation d'un simple plateau avec une hauteur et largeur donnes
 	 * et affichage de celui-ci @ToDo completer les doc
 	 * 
 	 */
-	public Plateau(int hauteur, int largeur) {
-		setLarg(largeur);
-		setHaut(hauteur);
+	public Plateau(Config config) {
+		setConfig(config);
+		setLarg();
+		setHaut();
 		System.out.println(Haut+" "+Larg); // @remove safe print
-		setCases(new Cases[Haut][Larg]);
+		Cases[][] TmpCases = new Cases[Haut][Larg];
 		for ( int i = 0; i < Larg; i++) {
 			for ( int j = 0; j < Haut; j++) {
-				this.cases[j][i]=new Cases(i,j);
+				TmpCases[j][i]=new Cases(i,j);
 			}
 		}
+		setCases(TmpCases);
 		setMarres();
 		setPions();
+		
+		// Listes des pions, temporaire à récupérer depuis les maps
+		trackBlanc();
+		trackNoir();
+		setCercleDeLaVie();
 	};
 	
 	/** 
@@ -97,16 +112,22 @@ public class Plateau {
 	public int getLarg() {
 		return Larg;
 	}
-	private void setLarg(int larg) {
-		Larg = larg;
+	private void setLarg() {
+		Larg = getConfig().getPlateauDim().getX();
 	}
 	public int getHaut() {
 		return Haut;
 	}
-	private void setHaut(int haut) {
-		Haut = haut;
+	private void setHaut() {
+		Haut = getConfig().getPlateauDim().getY();
 	}
-
+	private void setConfig(Config config) {
+		this.Configuration = config;
+		// TODO Auto-generated method stub	
+	}
+	private Config getConfig() {
+		return this.Configuration;
+	}
 	/* 
 	 * Methodes pour l'itialisation complete du plateau
 	 */
@@ -119,15 +140,13 @@ public class Plateau {
 	 * 
 	 */
 	private void setMarres() {
-		int drift = 1;
-		int midH = getHaut()/2;
-		int midL = getLarg()/2;
-		
-		this.cases[midH+drift][midL+drift].setMarre(true);
-		this.cases[midH+drift][midL-2*drift].setMarre(true);
-		this.cases[midH-2*drift][midL+drift].setMarre(true);
-		this.cases[midH-2*drift][midL-2*drift].setMarre(true);
-
+		Map<Coordonnees, Boolean> map = getConfig().getPosMarre();
+		System.out.print("Plop \n");
+		for (Map.Entry<Coordonnees, Boolean> entry : map.entrySet()) {
+		    Coordonnees key = entry.getKey();
+		    Boolean value = entry.getValue();
+		    this.cases[key.getX()][key.getY()].setMarre(value);
+		}
 	}
 	/**
 	 * Cette methode injecte des pions dans les cases qui doivent en contenir
@@ -140,38 +159,16 @@ public class Plateau {
 	 * Les pions noirs sont pour l'instant en ligne hauteur-1
 	 */ 
 	private void setPions() {
-		int driftL = 1;
-		int driftH = 1;
-		int midL = getLarg()/2;
-		int h = getHaut();
-		
-//		for ( int k = 0 ; k < map.length; k++){
-//			this.cases[Map.coordonnee.x][Map.coordonnee.y] = Map.pion;
-//		}
-		// Creation des lions
-		this.cases[0][midL+driftL].setPion(2,"Blanc");
-		this.cases[0][midL-2*driftL].setPion(2,"Blanc");
-		this.cases[h-driftH][midL+driftL].setPion(2,"Noir");
-		this.cases[h-driftH][midL-2*driftL].setPion(2,"Noir");
-		
-		// Creation des elephants
-		this.cases[0][midL].setPion(1,"Blanc");
-		this.cases[0][midL-driftL].setPion(1,"Blanc");
-		this.cases[h-driftH][midL].setPion(1,"Noir");
-		this.cases[h-driftH][midL-driftL].setPion(1,"Noir");
-		
-		// Creation des souris
-		this.cases[driftH][midL].setPion(3,"Blanc");
-		this.cases[driftH][midL-driftL].setPion(3,"Blanc");
-		this.cases[h-2*driftH][midL].setPion(3,"Noir");
-		this.cases[h-2*driftH][midL-driftL].setPion(3,"Noir");
-
-
+		Map<Coordonnees, Pion> map = getConfig().getPosPions();
+		for (Map.Entry<Coordonnees, Pion> entry : map.entrySet()) {
+		    Coordonnees key = entry.getKey();
+		    Pion value = entry.getValue();
+		    this.cases[key.getX()][key.getY()].setPion(value);
+		}
 	}
 	/**
 	 * Cette methode cherche touts les pions noirs
 	 */
-	@SuppressWarnings("unused")
 	private void trackNoir() {
 		int k = 0;
 		for ( int i = 0; i < this.Larg; i++) {
@@ -196,6 +193,36 @@ public class Plateau {
 			}
 			System.out.println(" ");
 		}
+	}
+	// Met en place le graphe orienté des relations entre les pions
+	private void setCercleDeLaVie(){
+		// Création d'un graphe 
+		Vertex[] Testest = Vertex.Relation(TypeDePion);
+		// Orientation du graphe
+		Vertex.CercleDeLaVie(Testest);
+		// print de test TODO remova that
+		for ( int i = 0 ; i < Testest.length ; i++){
+			System.out.print(Testest[i].getType()+" "+ Testest[i].getBloque().getType());
+		}
+		for ( int i = 0 ; i < PionBlancs.length; i ++ ){
+			for ( int j = 0 ; j < Testest.length; j ++){
+				if ( Testest[j].getType() == PionBlancs[i].getPion().getType() ){
+					PionBlancs[i].getPion().setParalyse(Testest[j]);
+					System.out.println("i ="+i+" j ="+j);
+					System.out.println(Testest[j].getType()+" "+PionBlancs[i].getPion().getType());
+					System.out.println(PionBlancs[i].getPion().getParalyse().getBloque().getType());
+
+				}
+				if ( Testest[j].getType() == PionNoirs[i].getPion().getType() ){
+					PionNoirs[i].getPion().setParalyse(Testest[j]);
+					System.out.println("i ="+i+" j ="+j);
+					System.out.println(Testest[j].getType()+" "+PionNoirs[i].getPion().getType());
+					System.out.println(PionNoirs[i].getPion().getParalyse().getBloque().getType());
+
+				}
+			}
+		}
+		
 	}
 	// Cette methode revoie la couleur d'un pion d'une case du plateau
 	public String contientCol(Cases Case) {
@@ -238,8 +265,23 @@ public class Plateau {
 		}
 		return true;
 	}
-
-
+	private boolean isRoadBlocked(Cases Check, Pion pion){
+		int x=Check.getX(), y = Check.getY();
+		return isRoadBlocked(x, y, pion);
+	}
+	private boolean isRoadBlocked(int x, int y, Pion pion){
+		for ( int i = - 1 ; i < 2; i+=2){
+			for ( int j = -1 ; j < 2; j+=2 ){
+				if ( ( (x+j) < 0 || (x+j) >= getLarg() ) || // new X hors du plateau ?
+						( (y+i) < 0 || (y+i) >= getHaut() ) ) { // new y hors du plateau ?
+					continue;
+				}
+				else if ( this.cases[x+j][y+i].contientPion() ){
+					if ( pion.getType() == this.cases[x+j][y+i].getPion().getParalyse().getBloque())
+				}
+			}
+		}	
+	}	
 	/** 
 	 * Classe interne Cases contenant les infos sur une case d'un plateau
 	 */
@@ -391,24 +433,24 @@ public class Plateau {
 			System.out.print(MonPlateau.PionBlancs[i].getPion().getType());
 		}
 		
-		Vertex[] Testest = Vertex.Relation(TypeDePion);
-		Vertex.CercleDeLaVie(Testest);
-		for ( int i = 0 ; i < Testest.length ; i++){
-			System.out.print(Testest[i].getType()+" "+ Testest[i].getBloque().getType());
-		}
-		System.out.println("set  Cercle ");
-
-		for ( int i = 0 ; i < MonPlateau.PionBlancs.length; i ++ ){
-			for ( int j = 0 ; j < Testest.length; j ++){
-				if ( Testest[j].getType() == MonPlateau.PionBlancs[i].getPion().getType() ){
-					MonPlateau.PionBlancs[i].getPion().setParalyse(Testest[j]);
-					System.out.println("i ="+i+" j ="+j);
-					System.out.println(Testest[j].getType()+" "+MonPlateau.PionBlancs[i].getPion().getType());
-					System.out.println(MonPlateau.PionBlancs[i].getPion().getParalyse().getBloque().getType());
-
-				}
-			}
-		}
+//		Vertex[] Testest = Vertex.Relation(TypeDePion);
+//		Vertex.CercleDeLaVie(Testest);
+//		for ( int i = 0 ; i < Testest.length ; i++){
+//			System.out.print(Testest[i].getType()+" "+ Testest[i].getBloque().getType());
+//		}
+//		System.out.println("\nset  Cercle ");
+//
+//		for ( int i = 0 ; i < MonPlateau.PionBlancs.length; i ++ ){
+//			for ( int j = 0 ; j < Testest.length; j ++){
+//				if ( Testest[j].getType() == MonPlateau.PionBlancs[i].getPion().getType() ){
+//					MonPlateau.PionBlancs[i].getPion().setParalyse(Testest[j]);
+//					System.out.println("i ="+i+" j ="+j);
+//					System.out.println(Testest[j].getType()+" "+MonPlateau.PionBlancs[i].getPion().getType());
+//					System.out.println(MonPlateau.PionBlancs[i].getPion().getParalyse().getBloque().getType());
+//
+//				}
+//			}
+//		}
 		System.out.println(" Cercle ?");
 		for ( int i = 0 ; i < MonPlateau.PionBlancs.length; i ++ ){
 			System.out.println(MonPlateau.PionBlancs[i].getPion().getType()+" "
@@ -416,8 +458,8 @@ public class Plateau {
 					+MonPlateau.PionBlancs[i].getPion().getParalyse().getBloque().getType());
 		}
 //		boolean test = MonPlateau.cases[5][5].getPion().canMove(5, 5, 3, 3);
-//		System.out.print(test);
-
+		System.out.print(MonPlateau.getCases()[-1][-1]);
+		
 	}
 }
 
