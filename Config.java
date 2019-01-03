@@ -4,6 +4,7 @@ public class Config {
 	Coordonnees PlateauDim;
 	Map<Coordonnees, Pion> PosPions;
 	Map<Coordonnees, Boolean> PosMarre;
+	static String[] TypeDePion = {"Elephant","Lion","Souris"};  // A modifier pour moduler
 
 	
 	public Config(int x, int y) {

@@ -35,10 +35,10 @@ public class BarcaGUI {
     }
 	
 	public static void main(String[] args){
-		BarcaGUI cg = new BarcaGUI();
+		BarcaGUI bg = new BarcaGUI();
 		
 		JFrame f = new JFrame("ChessChamp");
-		f.add(cg.getGui());
+		f.add(bg.getGui());
 	    // Ensures JVM closes after frame(s) closed and
 	    // all non-daemon threads are finished
 	    f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

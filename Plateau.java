@@ -11,7 +11,6 @@ public class Plateau {
 	Cases[] PionBlancs = new Cases[6]; // Est la pour le bot
 	Player AlaMain;
 	Config Configuration;
-	static String[] TypeDePion = {"Elephant","Lion","Souris"};  // A modifier pour moduler
 	
 	/** 
 	 * Creation du plateau sans dimension, appelle la creation de plateau a 2 entiers pour creer
@@ -197,7 +196,7 @@ public class Plateau {
 	// Met en place le graphe orienté des relations entre les pions
 	private void setCercleDeLaVie(){
 		// Création d'un graphe 
-		Vertex[] Testest = Vertex.Relation(TypeDePion);
+		Vertex[] Testest = Vertex.Relation(getConfig().TypeDePion);
 		// Orientation du graphe
 		Vertex.CercleDeLaVie(Testest);
 		// print de test TODO remova that
@@ -458,11 +457,17 @@ public class Plateau {
 //				}
 //			}
 //		}
-		System.out.println(" Cercle ?");
+		System.out.println(" Cercle ? Blanc");
 		for ( int i = 0 ; i < MonPlateau.PionBlancs.length; i ++ ){
 			System.out.println(MonPlateau.PionBlancs[i].getPion().getType()+" "
 					+MonPlateau.PionBlancs[i].getPion().getParalyse().getType()+" "
 					+MonPlateau.PionBlancs[i].getPion().getParalyse().getBloque().getType());
+		}
+		System.out.println(" Cercle ? Noir");
+		for ( int i = 0 ; i < MonPlateau.PionNoirs.length; i ++ ){
+			System.out.println(MonPlateau.PionNoirs[i].getPion().getType()+" "
+					+MonPlateau.PionNoirs[i].getPion().getParalyse().getType()+" "
+					+MonPlateau.PionNoirs[i].getPion().getParalyse().getBloque().getType());
 		}
 //		boolean test = MonPlateau.cases[5][5].getPion().canMove(5, 5, 3, 3);
 //		System.out.print(MonPlateau.getCases()[-1][-1]);
