@@ -3,7 +3,7 @@ import java.util.Map;
 
 // Cette classe cree des objets avec lesquelles les joeurs peuvent interagir 
 public class Plateau {
-	public Cases[][] cases; // TODO remettre en private
+	private Cases[][] cases; // TODO remettre en private
 	protected int Larg;
 	protected int Haut;
 	Cases[] PionNoirs = new Cases[6]; // TODO rendre le nombre de pions modulable
@@ -100,9 +100,11 @@ public class Plateau {
 	 * Methode pour l'affichage ASCII du plateau
 	 */
 	public void printASCII(){
+		Cases caseAct;
 		StringBuilder sbuf;
 		Formatter fmt;
-		
+		String pion;
+		char marre = ' ';
 		// On affiche d'abord la case d'angle
 		sbuf = new StringBuilder();
 		fmt = new Formatter(sbuf);
@@ -127,10 +129,22 @@ public class Plateau {
 				fmt.format("%-5d", i);
 				System.out.print(fmt);
 			for ( int j = 0; j < this.Haut; j++) {
+				// On récupère la case
+				caseAct = getCases()[i][j];
 
+				
+				// On verifie si il y a une marre sur la case
+				if (caseAct.isMarre()) marre = 'O';
+				else marre = ' ';
 				sbuf = new StringBuilder();
 				fmt = new Formatter(sbuf);
-				fmt.format("%-5s", this.cases[i][j].getCaseASCII());
+				if (caseAct.contientPion()){
+					if (caseAct.isMarre()) pion = this.cases[i][j].getCaseASCII().toUpperCase();
+					else pion = this.cases[i][j].getCaseASCII().toLowerCase();
+					fmt.format("%-5s", pion);
+				}
+				else fmt.format("%c%-4s",marre,"_|");
+				
 				System.out.print(fmt);
 			}
 			System.out.println();
@@ -336,7 +350,7 @@ public class Plateau {
 	/** 
 	 * Classe interne Cases contenant les infos sur une case d'un plateau
 	 */
- 	public class Cases { // TODO remettre en private
+ 	private class Cases { // TODO remettre en private
 		int x;
 		int y;
 		private Pion pion;

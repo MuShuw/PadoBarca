@@ -22,17 +22,21 @@ public class Config {
 		this(10,10);
 		// TODO Auto-generated constructor stub
 	}
-	private void setPlateauDim(int i, int j) {
-		if ( i%2 != 0 || j%2 != 0 || i < 6 || j < 6 || i > 20 || j > 20) setPlateauDim(new Coordonnees(10, 10));
-		else setPlateauDim(new Coordonnees(i, j));		
-	}
-
+	
 	public Coordonnees getPlateauDim() {
 		return PlateauDim;
+	}
+	
+	private void setPlateauDim(int i, int j) {
+		if ( i%2 != 0 || j%2 != 0 || i < 6 || j < 6 || i > 20 || j > 20) setPlateauDim(new Coordonnees(10, 10));
+		else setPlateauDim(new Coordonnees(i, j));	
+
+		refreshPos();
 	}
 
 	public void setPlateauDim(Coordonnees plateauDim) {
 		PlateauDim = plateauDim;
+		refreshPos();
 	}
 
 	public Map<Coordonnees, Pion> getPosPions() {
@@ -93,6 +97,10 @@ public class Config {
 		else PosMarre = posMarre;
 	}
 	
+	public void refreshPos(){
+		setPosMarre(null);
+		setPosPions(null);
+	}
 	public String[] getTypeDePion() {
 		return TypeDePion;
 	}
