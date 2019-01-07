@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workingSetManager>
-<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1546027295011_0" label="Window Working Set" name="Aggregate for window 1546027295010"/>
+<workingSet editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1546532941044_2" label="Barca" name="Barca"/>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1546532455204_0" label="Window Working Set" name="Aggregate for window 1546532455203"/>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1546532484316_1" label="Window Working Set" name="Aggregate for window 1546532484316"/>
+<mruList name="Barca"/>
 </workingSetManager>

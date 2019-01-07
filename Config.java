@@ -4,25 +4,26 @@ public class Config {
 	Coordonnees PlateauDim;
 	Map<Coordonnees, Pion> PosPions;
 	Map<Coordonnees, Boolean> PosMarre;
-	static String[] TypeDePion = {"Elephant","Lion","Souris"};  // A modifier pour moduler
+	String[] TypeDePion;  // A modifier pour moduler
 
 	
 	public Config(int x, int y) {
 		setPlateauDim(x, y);
-		System.out.println("passe coordonnées");
+//		System.out.println("passe coordonnées");
 		setPosPions(null);
-		System.out.println("passe pospions");
+//		System.out.println("passe pospions");
 		setPosMarre(null);
-		System.out.println("passe posmarre");
+//		System.out.println("passe posmarre");
+		String[] tmp = {"Elephant","Lion","Souris"};
+		setTypeDePion(tmp);
 
-		// TODO Auto-generated constructor stub
 	}
 	public Config() {
 		this(10,10);
 		// TODO Auto-generated constructor stub
 	}
 	private void setPlateauDim(int i, int j) {
-		if ( i%2 != 0 || j%2 != 0 || i < 6 || j < 6) setPlateauDim(new Coordonnees(10, 10));
+		if ( i%2 != 0 || j%2 != 0 || i < 6 || j < 6 || i > 20 || j > 20) setPlateauDim(new Coordonnees(10, 10));
 		else setPlateauDim(new Coordonnees(i, j));		
 	}
 
@@ -90,5 +91,12 @@ public class Config {
 			PosMarre.put(new Coordonnees(midH-2*drift,midL-2*drift), true);
 		}
 		else PosMarre = posMarre;
+	}
+	
+	public String[] getTypeDePion() {
+		return TypeDePion;
+	}
+	public void setTypeDePion(String[] typeDePion) {
+		TypeDePion = typeDePion;
 	}
 }

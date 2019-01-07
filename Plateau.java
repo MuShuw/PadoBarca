@@ -1,15 +1,13 @@
+import java.util.Formatter;
 import java.util.Map;
-
-import javax.naming.directory.DirContext;
 
 // Cette classe cree des objets avec lesquelles les joeurs peuvent interagir 
 public class Plateau {
-	protected Cases[][] cases;
+	public Cases[][] cases; // TODO remettre en private
 	protected int Larg;
 	protected int Haut;
 	Cases[] PionNoirs = new Cases[6]; // TODO rendre le nombre de pions modulable
 	Cases[] PionBlancs = new Cases[6]; // Est la pour le bot
-	Player AlaMain;
 	Config Configuration;
 	
 	/** 
@@ -99,10 +97,54 @@ public class Plateau {
 	}
 	
 	/**
+	 * Methode pour l'affichage ASCII du plateau
+	 */
+	public void printASCII(){
+		StringBuilder sbuf;
+		Formatter fmt;
+		
+		// On affiche d'abord la case d'angle
+		sbuf = new StringBuilder();
+		fmt = new Formatter(sbuf);
+		fmt.format("%-5s", "__");
+		System.out.print(fmt);
+		
+		// Puis on affiche le numéro de la colonne
+		for ( int k = 0; k < this.Haut; k++){
+			// méthode provenant de dzone.com
+			sbuf = new StringBuilder();
+			fmt = new Formatter(sbuf);
+			fmt.format("%-5d", k);
+			System.out.print(fmt);
+		}
+		System.out.println();
+		
+		
+		for ( int i = 0; i < this.Larg; i++) {
+			// On affiche le numéro de la colonne
+				sbuf = new StringBuilder();
+				fmt = new Formatter(sbuf);
+				fmt.format("%-5d", i);
+				System.out.print(fmt);
+			for ( int j = 0; j < this.Haut; j++) {
+
+				sbuf = new StringBuilder();
+				fmt = new Formatter(sbuf);
+				fmt.format("%-5s", this.cases[i][j].getCaseASCII());
+				System.out.print(fmt);
+			}
+			System.out.println();
+		}
+	}
+	/**
+	 * Fin des methodes d'affichage.
+	 */
+	/** 
 	 * Getter et setter des attributs du plateau
 	 */
 	@SuppressWarnings("unused")
-	private Cases[][] getCases() {
+	// TODO remettre en privé
+	public Cases[][] getCases() {
 		return cases;
 	}
 	private void setCases(Cases[][] cases) {
@@ -288,10 +330,13 @@ public class Plateau {
 		}	
 		return false;
 	}	
+	
+	
+	
 	/** 
 	 * Classe interne Cases contenant les infos sur une case d'un plateau
 	 */
- 	private class Cases {
+ 	public class Cases { // TODO remettre en private
 		int x;
 		int y;
 		private Pion pion;
@@ -333,9 +378,6 @@ public class Plateau {
 		public void setY(int y) {
 			this.y = y;
 		}
-		/**
-		 * @return the pion
-		 */
 		// Retourne le contenu de l'attribut pion : null ou un objet pion
 		public Pion getPion() {
 			return pion;
@@ -413,6 +455,25 @@ public class Plateau {
 		// Cette methode rentre vrai ou faux dans l'attribut Marre d'une case
 		public void setMarre(boolean marre) {
 			Marre = marre;
+		}
+		
+		/**
+		 * Méthodes pour l'interface graphique ASCII
+		 * Permettent de représenter les case et leur contenu
+		 */
+		public String getCaseASCII(){
+			if ( contientPion() ){
+				return (""+getPionTypeASCII()+getPionColASCII());
+			}
+			return "  ";
+		}
+		public char getPionTypeASCII(){
+			char type = getPion().getType().charAt(0);
+			return type;
+		}
+		public char getPionColASCII(){
+			char col = getPionCol().charAt(0);
+			return col;
 		}
 		
 	}
