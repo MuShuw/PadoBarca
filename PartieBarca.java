@@ -2,11 +2,12 @@ import java.util.Scanner;
 
 public class PartieBarca {
 	private Plateau plateau;
-	private Player blanc;
-	private Player noir;
+//	private Player noir;
+//	private Player blanc;
+//	private Player AlaMain;
 	private IA bot;
-	private Player AlaMain;
 	private boolean GameOver = false;
+	
 	
 	public PartieBarca(Config config) {
 		setPlateau(new Plateau(config));
@@ -14,7 +15,7 @@ public class PartieBarca {
 		
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	public Plateau getPlateau() {
 		return plateau;
 	}
@@ -23,14 +24,44 @@ public class PartieBarca {
 		this.plateau = plateau;
 	}
 
-	public Player getBlanc() {
-		return blanc;
-	}
+	/**
+	 * Methodes relatives aux joueurs
+	 */
+	
+//	public Player getBlanc() {
+//		return blanc;
+//	}
+//
+//	public void setBlanc(Player blanc) {
+//		this.blanc = blanc;
+//	}
+//
+//	public Player getAlaMain() {
+//		return AlaMain;
+//	}
+//
+//	public void setAlaMain(Player alaMain) {
+//		AlaMain = alaMain;
+//	}
+//	
+//	public Player getNoir() {
+//		return noir;
+//	}
+//	
+//	public void setNoir(Player noir) {
+//		this.noir = noir;
+//	}
 
-	public void setBlanc(Player blanc) {
-		this.blanc = blanc;
-	}
+//	public void tourDeJeu(Player ASonTour){
+//		
+//        Scanner in = new Scanner(System.in);
+//		while ( ASonTour == getAlaMain() ){
+//			
+//			in.nextInt();
+//		}
+//	}
 
+	
 	public Player getBot() {
 		return bot;
 	}
@@ -38,22 +69,7 @@ public class PartieBarca {
 	public void setBot(IA bot) {
 		this.bot = bot;
 	}
-
-	public Player getNoir() {
-		return noir;
-	}
 	
-	public void setNoir(Player noir) {
-		this.noir = noir;
-	}
-	public Player getAlaMain() {
-		return AlaMain;
-	}
-
-	public void setAlaMain(Player alaMain) {
-		AlaMain = alaMain;
-	}
-
 	private boolean isGameOver() {
 		return GameOver;
 	}
@@ -62,15 +78,11 @@ public class PartieBarca {
 		GameOver = gameOver;
 	}
 
-	public void tourDeJeu(Player ASonTour){
-		
-        Scanner in = new Scanner(System.in);
-		while ( ASonTour == getAlaMain() ){
-			
-			in.nextInt();
-		}
-	}
-
+	
+	/**
+	 * Méthodes pour l'initialisation de la partie et son déroulement
+	 */
+	// Creation de la configuration
 	public static Config createConfig(Scanner scan){
 		Config config = new Config();
 		String entree;
@@ -80,7 +92,6 @@ public class PartieBarca {
 		while ( classique == 1 ){
 			System.out.println("Voulez-vous utilisez la configuration classique ? O/N");
 			entree = scan.nextLine();
-			System.out.print(entree);
 			
 			// On va vérifier si la réponse est oui ou non.
 			if ( entree.charAt(0) == 'O') {
@@ -114,7 +125,7 @@ public class PartieBarca {
 		
 		return config;
 	}
-	
+	// Modification des dimensions du plateau classique
 	private static Coordonnees creatDim(Scanner scan) {
 		String entree;
 		
@@ -142,6 +153,24 @@ public class PartieBarca {
 		return dimension;
 	}
 
+	private String runGame(Scanner scan){
+		int xd, yd, xa, ya;
+		do{
+			System.out.println("Veuillez tapez les coordonées de départ et d'arrivée ( col lin col lin )\n");
+			yd = scan.nextInt();
+			xd = scan.nextInt();
+			ya = scan.nextInt();
+			xa = scan.nextInt();
+			System.out.println(xd+" "+yd+" "+xa+" "+ya+" ");
+		}while(!moveFromTo(xd, yd, xa, ya));
+		this.plateau.printASCII();
+		return "Plop\n";
+	}
+	
+	private boolean moveFromTo(int xd, int yd, int xa, int ya){
+		return this.plateau.movePion(xd, yd, xa, ya);
+	}
+	
 	public static void main(String[] args){
 		Scanner scan = new Scanner(System.in);	
 		System.out.println("Bienvenue dans Barca !");
@@ -162,11 +191,15 @@ public class PartieBarca {
 		
 		game.plateau.printASCII();
 		
+		// lancer une methode game() de partie 
+		game.runGame(scan);
 		// TESTS
 		String userName = " ";
 	    System.out.println("Enter username");
 	    userName = scan.nextLine();
 	    System.out.println("Username is: " + userName);  // Output user input 
+	    // fin du programme
+	    scan.close();
 		
 	}
 }

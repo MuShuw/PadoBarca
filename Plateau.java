@@ -284,21 +284,27 @@ public class Plateau {
 		return Case.getPionCol();		
 	}
 	// Cette methode deplace un pion
-	public int movePion(Cases Depart, Cases Arrivee) {
+	public boolean movePion(Cases Depart, Cases Arrivee) {
 		int xd=Depart.getX(), yd = Depart.getY(), xa = Arrivee.getX(), ya = Arrivee.getY();
 		if(Depart.contientPion() && !Arrivee.contientPion()) {
+			System.out.println("Contient un pion et arrivée vide");
 			Pion ToMove = Depart.getPion();
 			if ( ToMove.canMove(xd, yd, xa, ya) && emptyRoad(Depart, Arrivee)){
+				// Si il a pu bouger il est forcément sur une case o` il n'est plus
+				// paralysé
+				Depart.getPion().setEtatParalysie(false);
+				// On vérifie si il paralyse un pion
+				// TODO emprunter de la methode isRoadBlocked
 				Arrivee.setPion(Depart.getPion());
 				Depart.setPion();
-				return 0;
+				return true;
 			}
 		}
 		System.out.println("Mouvement impossible");
-		return 1; // TODO peut-etre utile de recupere une valeur pour plus tard
+		return false; // TODO peut-etre utile de recupere une valeur pour plus tard
 	}
-	public void movePion(int xd, int yd, int xa, int ya){
-		movePion(this.cases[yd][xd], this.cases[ya][xa]);
+	public boolean movePion(int xd, int yd, int xa, int ya){
+		return movePion(this.cases[yd][xd], this.cases[ya][xa]);
 	}
 	public boolean emptyRoad(Cases Depart, Cases Arrivee){
 		int xd=Depart.getX(), yd = Depart.getY(), xa = Arrivee.getX(), ya = Arrivee.getY();
@@ -310,7 +316,7 @@ public class Plateau {
 		int DirectionX;
 		if ( ( ya - yd) != 0) DirectionY = (ya - yd)/Math.abs(ya - yd);
 		else DirectionY = 0;
-		if ( ( xa - xd) != 0) DirectionX = (ya - yd)/Math.abs(ya - yd);
+		if ( ( xa - xd) != 0) DirectionX = (xa - xd)/Math.abs(xa - xd);
 		else DirectionX = 0;
 		int i = xd+DirectionX, j = yd+DirectionY;
 		if ( isRoadBlocked(xd, yd, VeutBouger) ) return false;
@@ -336,8 +342,7 @@ public class Plateau {
 				else if ( this.cases[x+j][y+i].contientPion() ){
 					Pion PionCroise = this.cases[x+j][y+i].getPion();
 					String cible = PionCroise.getParalyse().getBloque().getType();
-					if ( pion.getType() == cible && 
-							pion.getCol() != PionCroise.getCol()) return true;
+					if ( pion.getType() == cible && pion.getCol() != PionCroise.getCol()) return true;
 				}
 				else continue;
 			}
