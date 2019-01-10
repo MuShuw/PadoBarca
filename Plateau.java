@@ -311,20 +311,32 @@ public class Plateau {
 		return emptyRoad(xd, yd, xa, ya);
 	}
 	private boolean emptyRoad(int xd, int yd, int xa, int ya) {
-		Pion VeutBouger = this.cases[xd][yd].getPion();
+		System.out.println(""+xd+" "+yd);
+		Pion VeutBouger = this.cases[yd][xd].getPion();
+		if ( VeutBouger == null ) System.out.println("merde");
+
 		int DirectionY;
 		int DirectionX;
 		if ( ( ya - yd) != 0) DirectionY = (ya - yd)/Math.abs(ya - yd);
 		else DirectionY = 0;
+		System.out.println("La direction sur y est: "+DirectionY);
+
 		if ( ( xa - xd) != 0) DirectionX = (xa - xd)/Math.abs(xa - xd);
 		else DirectionX = 0;
+		System.out.println("La direction sur x est: "+DirectionX);
+		
+		// On va commencer par la première case de son déplacement
 		int i = xd+DirectionX, j = yd+DirectionY;
 		if ( isRoadBlocked(xd, yd, VeutBouger) ) return false;
+		
+		// Puis on va tester toutes les cases à venir
 		while ( ( DirectionX !=0 && i != xa ) || ( DirectionY != 0 &&j != ya) ){
 			if ( this.cases[j][i].contientPion() || isRoadBlocked(j, i, VeutBouger) ){
 				return false;
 			}
 			i += DirectionX; j += DirectionY;
+			System.out.println("La direction sur x est: "+DirectionX);
+			System.out.println("La direction sur y est: "+DirectionY);
 		}
 		return true;
 	}
@@ -333,16 +345,30 @@ public class Plateau {
 		return isRoadBlocked(x, y, pion);
 	}
 	private boolean isRoadBlocked(int x, int y, Pion pion){
+		System.out.println("premier check :"+x+" "+y);
 		for ( int i = - 1 ; i < 2; i+=2){
 			for ( int j = -1 ; j < 2; j+=2 ){
 				if ( ( (x+j) < 0 || (x+j) >= getLarg() ) || // new X hors du plateau ?
 						( (y+i) < 0 || (y+i) >= getHaut() ) ) { // new y hors du plateau ?
+					System.out.println("if sous check :"+(x+j)+" "+(y+i));
+					System.out.println("Hors plateau.");
 					continue;
 				}
 				else if ( this.cases[x+j][y+i].contientPion() ){
+					System.out.println("else sous check :"+(x+j)+" "+(y+i));
 					Pion PionCroise = this.cases[x+j][y+i].getPion();
+					System.out.println("Passe le getpion");
+					if ( PionCroise == null ) {
+						System.out.println("Dans le check null");
+						continue;
+					}
+					System.out.println("Passe le check null");
 					String cible = PionCroise.getParalyse().getBloque().getType();
-					if ( pion.getType() == cible && pion.getCol() != PionCroise.getCol()) return true;
+					System.out.println("Passe le get stuff "+cible+" face à "+pion.getType());
+					if ( pion.getType() == cible && pion.getCol() != PionCroise.getCol()) {
+						System.out.println("Entre le dernier if");
+						return true;
+					}
 				}
 				else continue;
 			}

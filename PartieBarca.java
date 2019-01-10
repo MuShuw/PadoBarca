@@ -186,13 +186,11 @@ public class PartieBarca {
 		// Les configuration sont établis, nous allons crée la partie
 		PartieBarca game = new PartieBarca(config);
 		
-		String x;
-		int y;
-		
 		game.plateau.printASCII();
 		
 		// lancer une methode game() de partie 
 		game.runGame(scan);
+		
 		// TESTS
 		String userName = " ";
 	    System.out.println("Enter username");

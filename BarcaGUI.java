@@ -9,13 +9,13 @@ import javax.swing.JToolBar;
 
 
 public class BarcaGUI {
-	private static final JPanel GUI = new JPanel(new BorderLayout(100, 100));
+	private static final JPanel GUI = new JPanel();
 	
 	public BarcaGUI() {
 		GUI.setBounds(500, 5, 5, 5);
 		JToolBar BarDoutil = new JToolBar();
         BarDoutil.setFloatable(false);
-		GUI.add(BarDoutil, BorderLayout.SOUTH);
+		GUI.add(BarDoutil, BorderLayout.NORTH);
 		
 		BarDoutil.add(new JButton("New Game")); // TODO - add functionality!
         BarDoutil.addSeparator(new Dimension(20, 20));
