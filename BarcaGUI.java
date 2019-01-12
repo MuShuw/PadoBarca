@@ -35,10 +35,11 @@ public class BarcaGUI {
 	private int[][] couleur = {{255, 204, 153},
 			{153, 51, 51}};
 	private Image[][] pions = new Image[2][3];
-	private int width;
-	private int height;
-	private int nlig=8;
-	private int ncol=8;
+	private Image invisible;
+	private static int width=700;
+	private static int height=500;
+	private int nrow;
+	private int ncol;
 	private JFrame barcaFrame;
 	private JPanel barcaPlateau;
 	private JPanel[][] barcaCases; 
@@ -51,20 +52,21 @@ public class BarcaGUI {
 	
 	public BarcaGUI(Config config) throws InvocationTargetException, InterruptedException {
 		// Recuperation des images
+		this.ncol = config.getPlateauDim().getX();
+		this.nrow = config.getPlateauDim().getY();
+
 		setPawnImg();
-		int width = config.getPlateauDim().getX();
-		int height = config.getPlateauDim().getY();
+
 		// Configuration du Frame principale
 		barcaFrame = new JFrame("Barca : un jeu qui Swing !");
-		barcaFrame.setPreferredSize(new Dimension(width, height));
-		setSize(width, height);
+		barcaFrame.setPreferredSize(new Dimension(this.width, this.height));
 		barcaFrame.setSize(this.width, this.height);
-		barcaPlateau = new JPanel(new GridLayout(8, 8, 1, 1));
-		barcaPlateau.setPreferredSize(new Dimension(width-200,height)); 
+		barcaPlateau = new JPanel(new GridLayout(this.width, this.height, 1, 1));
+		barcaPlateau.setPreferredSize(new Dimension(this.width-200,this.height)); 
 		JPanel colDroite = new JPanel();
-		colDroite.setPreferredSize(new Dimension(100, height));
+		colDroite.setPreferredSize(new Dimension(100, this.height));
 		JPanel colGauche = new JPanel();
-		colGauche.setPreferredSize(new Dimension(100, height));
+		colGauche.setPreferredSize(new Dimension(100, this.height));
 		barcaFrame.add(colDroite, BorderLayout.EAST);
 		barcaFrame.add(colGauche, BorderLayout.WEST);
 
@@ -86,16 +88,15 @@ public class BarcaGUI {
 		barcaFrame.setVisible(true);
 		
 
-		setCases(config);
 		barcaFrame.setVisible(true);
 
 
 	}
 
-	private static BufferedImage Invisible(int width, int height) {
-		BufferedImage invisibleIcon = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		return invisibleIcon;
-	}
+//	private static BufferedImage Invisible(int width, int height) {
+//		BufferedImage invisibleIcon = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+//		return invisibleIcon;
+//	}
 	
 	
  	public void setPawnImg(){
@@ -109,6 +110,13 @@ public class BarcaGUI {
 			    System.out.println(ex);
 			  }
 		}
+		// Creation de l'image pour les icons invisibles
+		try {
+		    File fileImg = new File("pawns/invisible.gif");
+		    invisible = ImageIO.read(fileImg);
+		  } catch (Exception ex) {
+		    System.out.println("Problem Invisible");
+		  }
 	}
 	public void setCases(Config config) throws InvocationTargetException, InterruptedException {
 		GridBagConstraints gbc;
@@ -119,11 +127,13 @@ public class BarcaGUI {
 		// On récupère la taille du plateau
 		int x = config.getPlateauDim().getX(), y = config.getPlateauDim().getY(), tmpCol;
 		// On crée les panels
+		this.barcaPlateau = new JPanel(new GridLayout(x,y));
+		this.barcaPlateau.setPreferredSize(new Dimension(500, 500));
 		this.barcaCases = new JPanel[x][y];
 		// On crée leurs boutons
 		this.barcaButton = new JButton[x][y];
 		for ( int i = 0; i < x; i++) {
-			for ( int j = 0; j < x; j++) {
+			for ( int j = 0; j < y; j++) {
 				tmpCol = (i+j)%2;
 				// On crée le panel de cette case
 				// avec un gridbacklayout pour pouvoir remplir
@@ -139,8 +149,9 @@ public class BarcaGUI {
 //				// On crée la couleur de la case
 //				barcaCases[i][j].setBackground(new Color(coul[0], coul[1], coul[2]));
 				// On set le preferredSize
-				barcaCases[i][j].setPreferredSize(new Dimension (barcaPlateau.getPreferredSize().width/ncol,
-						barcaPlateau.getPreferredSize().height/nlig) );				
+				barcaCases[i][j].setPreferredSize(new Dimension (this.barcaPlateau.getPreferredSize().width/ncol,
+						this.barcaPlateau.getPreferredSize().height/nrow) );	
+				System.out.println("La taille des cases est donc de ::"+barcaCases[i][j].getPreferredSize()+" ");
 				
 				
 				////////////////////////////////////////
@@ -156,10 +167,10 @@ public class BarcaGUI {
 //								)
 //							)
 //						);
-
 				// On intègre l'image dans le bouton
 					try {
-					    Image Img = pions[1][2];
+					    Image Img = this.pions[0][2];
+					    System.out.println(" Passe avec le iwidthnvisible.i= "+i+" j="+j);
 					    
 					    barcaButton[i][j].setIcon(
 					    		new ImageIcon(
@@ -170,23 +181,25 @@ public class BarcaGUI {
 					    						)
 					    		);
 					  } catch (Exception ex) {
-					    System.out.println(ex);
+					    System.out.println("Fuuuuuuuuck");
 					  }
 				
 				final int tmpi = i;
 				final int tmpj = j;
+				System.out.println(" tmp i et j = "+tmpi+" "+tmpj);
 				barcaCases[i][j].add(barcaButton[i][j], gbc);
 				EventQueue.invokeAndWait(new Runnable() {
 					
 					public void run() {
-						// TODO Auto-generated method stub
+						// TODO Auto-geconfignerated method stub
 						
 					
 						barcaCases[tmpi][tmpj].addComponentListener(new ComponentAdapter (){
 							public void componentResized(ComponentEvent e){		
-								if (barcaButton[tmpi][tmpj].getIcon() != null ) {
+
 			//						System.out.println(barcaCases[i][j].getSize().width+" "+barcaCases[i][j].getSize().height);
 									Dimension size = barcaCases[tmpi][tmpj].getSize();
+									System.out.println("La taille est de ::"+size);
 									
 									
 									barcaButton[tmpi][tmpj].setSize(size);
@@ -207,8 +220,6 @@ public class BarcaGUI {
 													)
 											);
 									
-								
-								}
 							}
 						});
 					}
@@ -219,18 +230,20 @@ public class BarcaGUI {
 				barcaPlateau.add(barcaCases[i][j]);
 			}
 		}
-		
+		this.barcaFrame.setVisible(true);
 	}
 
 	public void setPawnIcons(Config config) {
 		
 	}
 	private void setSize(int width, int height) {
-		this.width = width;
-		this.height = height;		
+		BarcaGUI.width = width;
+		BarcaGUI.height = height;		
 	}
 	public static void main(String[] args) throws InvocationTargetException, InterruptedException{
-		new BarcaGUI();
+		BarcaGUI gui = new BarcaGUI();
+		gui.setCases(new Config() );
+		gui.barcaFrame.setVisible(true);
 //		BarcaGUI barcaGUI = new BarcaGUI();
 //		
 //		JFrame barcaFrame = new JFrame("Barca");
