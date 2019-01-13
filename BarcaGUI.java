@@ -43,7 +43,7 @@ public class BarcaGUI {
 	private JFrame barcaFrame;
 	private JPanel barcaPlateau;
 	private JPanel[][] barcaCases; 
-	private JButton[][] barcaButton = new JButton[8][8];
+	private BarcaCase[][] barcaButton;
 	private JMenuBar barcaMenu;
 	
 	public BarcaGUI() throws InvocationTargetException, InterruptedException {
@@ -83,7 +83,6 @@ public class BarcaGUI {
 		}
 		
 		barcaFrame.setJMenuBar(barcaMenu);
-		barcaPlateau.setBackground(Color.BLACK);
 		barcaFrame.add(barcaPlateau, BorderLayout.CENTER);
 		barcaFrame.setVisible(true);
 		
@@ -126,12 +125,18 @@ public class BarcaGUI {
 		gbc.weighty = 1.0; 
 		// On récupère la taille du plateau
 		int x = config.getPlateauDim().getX(), y = config.getPlateauDim().getY(), tmpCol;
-		// On crée les panels
+
+		// On retire le premier plateau
+		BorderLayout bl = (BorderLayout) this.barcaFrame.getLayout();
+        this.barcaPlateau.remove(bl.getLayoutComponent(BorderLayout.CENTER));
+
+
+		
 		this.barcaPlateau = new JPanel(new GridLayout(x,y));
 		this.barcaPlateau.setPreferredSize(new Dimension(500, 500));
 		this.barcaCases = new JPanel[x][y];
 		// On crée leurs boutons
-		this.barcaButton = new JButton[x][y];
+		this.barcaButton = new BarcaCase[x][y];
 		for ( int i = 0; i < x; i++) {
 			for ( int j = 0; j < y; j++) {
 				tmpCol = (i+j)%2;
@@ -156,7 +161,7 @@ public class BarcaGUI {
 				
 				////////////////////////////////////////
 				// On crée le bouton du panel qu'on rend transparent
-				barcaButton[i][j] = new JButton();
+				barcaButton[i][j] = new BarcaCase();
 				barcaButton[i][j].setOpaque(true);
 				barcaButton[i][j].setContentAreaFilled(false);
 				barcaButton[i][j].setBorder(null);
@@ -171,7 +176,7 @@ public class BarcaGUI {
 					try {
 					    Image Img = this.pions[0][2];
 					    System.out.println(" Passe avec le iwidthnvisible.i= "+i+" j="+j);
-					    
+					    barcaButton[i][j].setPion(Img);
 					    barcaButton[i][j].setIcon(
 					    		new ImageIcon(
 					    				Img.getScaledInstance(
@@ -181,7 +186,7 @@ public class BarcaGUI {
 					    						)
 					    		);
 					  } catch (Exception ex) {
-					    System.out.println("Fuuuuuuuuck");
+					    System.out.println(ex);
 					  }
 				
 				final int tmpi = i;
@@ -197,12 +202,15 @@ public class BarcaGUI {
 						barcaCases[tmpi][tmpj].addComponentListener(new ComponentAdapter (){
 							public void componentResized(ComponentEvent e){		
 
-			//						System.out.println(barcaCases[i][j].getSize().width+" "+barcaCases[i][j].getSize().height);
 									Dimension size = barcaCases[tmpi][tmpj].getSize();
 									System.out.println("La taille est de ::"+size);
 									
 									
 									barcaButton[tmpi][tmpj].setSize(size);
+									size = barcaButton[tmpi][tmpj].getSize();
+
+									System.out.println("La taille est de ::"+size);
+
 	//								Insets insets = barcaButton[tmpi][tmpj].getInsets();
 	//								size.width -= insets.left + insets.right;
 	//								size.height -= insets.top + insets.bottom;
@@ -211,9 +219,9 @@ public class BarcaGUI {
 									}else{
 										size.height = -1;
 									}
-									ImageIcon tmp = (ImageIcon) barcaButton[tmpi][tmpj].getIcon();
+									Image tmp = barcaButton[tmpi][tmpj].getPion();
 									barcaButton[tmpi][tmpj].setIcon(new ImageIcon (
-											tmp.getImage().getScaledInstance(
+											tmp.getScaledInstance(
 													size.width,
 													size.height,
 													java.awt.Image.SCALE_FAST)
@@ -228,8 +236,10 @@ public class BarcaGUI {
 					
 				
 				barcaPlateau.add(barcaCases[i][j]);
+				
 			}
 		}
+		this.barcaFrame.add(barcaPlateau);
 		this.barcaFrame.setVisible(true);
 	}
 
