@@ -205,7 +205,7 @@ public class BarcaGUI {
 				final int tmpi = i;
 				final int tmpj = j;
 				barcaCases[i][j].add(barcaButton[i][j], gbc);
-				EventQueue.invokeAndWait(new Runnable() {
+				EventQueue.invokeLater(new Runnable() {
 					
 					public void run() {
 						// TODO Auto-generated method stub
