@@ -3,12 +3,26 @@ import javax.swing.Icon;
 import javax.swing.JButton;
 
 public class BarcaButton extends JButton {
+	String sourceImage; 
+	public String getSourceImage() {
+		return sourceImage;
+	}
+
+	public void setSourceImage(String sourceImage) {
+		this.sourceImage = sourceImage;
+	}
 
 	public BarcaButton() {
 		
 		// TODO Auto-generated constructor stub
 	}
-
+	
+	public BarcaButton(String source) {
+		
+		super(icon);
+		// TODO Auto-generated constructor stub
+	}
+	
 	public BarcaButton(Icon icon) {
 		super(icon);
 		// TODO Auto-generated constructor stub
