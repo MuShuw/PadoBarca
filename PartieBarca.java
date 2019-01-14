@@ -179,6 +179,15 @@ public class PartieBarca {
 		else return "Noir";
 	}
 	
+	public String[][] asciiForGui(){
+		String[][] aFG = new String[this.plateau.Larg][this.plateau.Haut];
+		for ( int i = 0 ; i < this.plateau.Larg ; i++) {
+			for ( int j = 0 ; j < this.plateau.Haut ; j++) {
+				aFG[i][j] = this.plateau.getCaseASCII(i,j);
+			}
+		}
+		return aFG;
+	}
 	public String runGame(BarcaGUI gui){
 		Coordonnees selection1 = gui.selection1;
 		Coordonnees selection2 = gui.selection2; 
@@ -217,6 +226,7 @@ public class PartieBarca {
 			// rafraichissement de la liste des pions
 			if ( this.AlaMain == "Noir") this.AlaMain = "Blanc";
 			else this.AlaMain = "Noir";
+			gui.refreshButImg(this.asciiForGui());
 			this.GameOver=didSmnWon();
 			this.plateau.printASCII();
 		}

@@ -302,7 +302,6 @@ public class Plateau {
 				System.out.println("Vous devez bouger un des pions pralysés.");
 				return false;
 			}
-			if ( ToMove.getCol() == "Blanc" && (!ToMove.isEtatParalysie() && isThereBPara())) return false;
 
 			if ( ToMove.canMove(xd, yd, xa, ya) && emptyRoad(Depart, Arrivee)){
 				// Si il a pu bouger il est forcément sur une case o` il n'est plus
@@ -324,7 +323,6 @@ public class Plateau {
 	public void checkParalyse() {
 		int x, y;
 		Pion pion;
-		System.out.println("init-------------");
 		for ( int i = 0 ; i < PionBlancs.length; i++){
 			x = PionBlancs[i].getX(); y = PionBlancs[i].getY();
 			pion = PionBlancs[i].getPion();
@@ -334,7 +332,6 @@ public class Plateau {
 				pion.setEtatParalysie(false);
 			}
 		}
-		System.out.println("forr blacccc -----00");
 		for ( int i = 0 ; i < PionNoirs.length; i++){
 			System.out.println(" In check for black");
 			pion = PionNoirs[i].getPion();
@@ -409,7 +406,7 @@ public class Plateau {
 		
 		// On va commencer par la première case de son déplacement
 		int i = xd+DirectionX, j = yd+DirectionY;
-		if ( isRoadBlocked(xd, yd, VeutBouger) ) return false;
+		if ( isRoadBlocked(j, i, VeutBouger) ) return false;
 		
 		// Puis on va tester toutes les cases à venir
 		while ( ( DirectionX !=0 && i != xa ) || ( DirectionY != 0 &&j != ya) ){
@@ -427,8 +424,8 @@ public class Plateau {
 	}
 	private boolean isRoadBlocked(int x, int y, Pion pion){
 		System.out.println("premier check :"+x+" "+y);
-		for ( int i = - 1 ; i < 2; i+=2){
-			for ( int j = -1 ; j < 2; j+=2 ){
+		for ( int i = - 1 ; i < 2; i++){
+			for ( int j = -1 ; j < 2; j++ ){
 				if ( ( (x+j) < 0 || (x+j) >= getLarg() ) || // new X hors du plateau ?
 						( (y+i) < 0 || (y+i) >= getHaut() ) ) { // new y hors du plateau ?
 					System.out.println("if sous check :"+(x+j)+" "+(y+i));
@@ -467,6 +464,10 @@ public class Plateau {
 		}
 		if ( noir >= blanc) return noir;
 		return blanc;
+	}
+	
+	public String getCaseASCII(int i, int j){
+		return this.cases[i][j].getCaseASCII();
 	}
 	
 	/** 

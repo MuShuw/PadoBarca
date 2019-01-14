@@ -100,7 +100,6 @@ public class BarcaGUI {
 	public void setButImg(Config config){
 		int coul, piece;
 		Map<Coordonnees, Pion> map = config.getPosPions();
-		System.out.print("Plop \n");
 		for (Map.Entry<Coordonnees, Pion> entry : map.entrySet()) {
 		    Coordonnees key = entry.getKey();
 		    Pion value = entry.getValue();
@@ -113,6 +112,40 @@ public class BarcaGUI {
 		    this.barcaButton[key.getX()][key.getY()].setPion(this.pions[coul][piece]);
 		}
 	}
+	public void refreshButImg(String[][] asciiPion){
+		Dimension size;
+		// A améliorer avec une map correcte
+		int coul, piece;
+		for ( int i = 0 ; i < this.nrow; i++) {
+			for ( int j = 0 ; j < this.ncol; j++) {
+				System.out.println(asciiPion[i][j]);
+				if ( asciiPion[i][j] == "  " ) {
+					this.barcaButton[i][j].setPion(this.invisible);
+					continue;
+				}
+				if( asciiPion[i][j].charAt(1) == 'B' ) coul = 0;
+				else coul = 1;
+				if( asciiPion[i][j].charAt(0) == 'E' ) piece = 0;
+				else if( asciiPion[i][j].charAt(0) == 'L' ) piece = 1;
+				else piece = 2;
+				this.barcaButton[i][j].setPion(this.pions[coul][piece]);
+				// A isoler dans une fonction !!
+				size = barcaButton[i][j].getSize(); // POURQUOI ? avoir Icon avec size du button ?
+				Image tmp = barcaButton[i][j].getPion();
+				barcaButton[i][j].setIcon(null);
+				barcaButton[i][j].setIcon(new ImageIcon (
+														tmp.getScaledInstance(
+																size.width,
+																size.height,
+																java.awt.Image.SCALE_FAST)
+																)
+														);
+				}
+		}	
+		refreshIcon();
+		this.barcaFrame.setVisible(true);
+	}
+	
 	public void setPawnImg(){
 		String[] imPions = {"1a.gif","1b.gif","2a.gif","2b.gif","3a.gif","3b.gif"};
 		for ( int i = 0 ; i < imPions.length; i++ ){
@@ -240,7 +273,7 @@ public class BarcaGUI {
 									
 									
 									barcaButton[tmpi][tmpj].setSize(size);
-									size = barcaButton[tmpi][tmpj].getSize();
+									size = barcaButton[tmpi][tmpj].getSize(); // POURQUOI ? avoir Icon avec size du button ?
 
 
 	//								Insets insets = barcaButton[tmpi][tmpj].getInsets();
