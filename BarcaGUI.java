@@ -13,11 +13,14 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.ObjectInputStream.GetField;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import java.util.Map;
@@ -35,6 +38,7 @@ import javax.swing.JToolBar;
 
 
 public class BarcaGUI {
+	private static final Object[][] BarcaCase = null;
 	private int[][] couleur = {{255, 204, 153},
 			{153, 51, 51}};
 	private Image[][] pions = new Image[2][3];
@@ -48,6 +52,8 @@ public class BarcaGUI {
 	private JPanel[][] barcaCases; 
 	private BarcaCase[][] barcaButton;
 	private JMenuBar barcaMenu;
+	public Coordonnees selection1;
+	public Coordonnees selection2;
 	
 	public BarcaGUI() throws InvocationTargetException, InterruptedException {
 		this(new Config());
@@ -57,7 +63,8 @@ public class BarcaGUI {
 		// Recuperation des images
 		this.ncol = config.getPlateauDim().getX();
 		this.nrow = config.getPlateauDim().getY();
-
+		this.selection1 = new Coordonnees(-1, -1);
+		this.selection2 = new Coordonnees(-1, -1);
 		setPawnImg();
 
 		// Configuration du Frame principale
@@ -129,6 +136,7 @@ public class BarcaGUI {
 			try {
 			    File fileImg = new File("pawns/"+imPions[i]);
 			    Image Img = ImageIO.read(fileImg);
+			    System.out.println(" La type est :" +i%3+" et l'image est "+imPions[i]);
 			    pions[i%2][i%3] = Img.getScaledInstance(Img.getWidth(null), -1, Image.SCALE_SMOOTH);
 			  } catch (Exception ex) {
 			    System.out.println(ex);
@@ -180,7 +188,6 @@ public class BarcaGUI {
 				// On set le preferredSize
 				barcaCases[i][j].setPreferredSize(new Dimension (this.barcaPlateau.getPreferredSize().width/ncol,
 						this.barcaPlateau.getPreferredSize().height/nrow) );	
-				System.out.println("La taille des cases est donc de ::"+barcaCases[i][j].getPreferredSize()+" ");
 				
 				
 				////////////////////////////////////////
@@ -189,6 +196,7 @@ public class BarcaGUI {
 				barcaButton[i][j].setOpaque(true);
 				barcaButton[i][j].setContentAreaFilled(false);
 				barcaButton[i][j].setBorder(null);
+				barcaButton[i][j].setCoord(x, y);
 //				barcaButton[i][j].setIcon(new ImageIcon(
 //							BarcaGUI.Invisible(
 //								barcaCases[i][j].getPreferredSize().width,
@@ -216,6 +224,25 @@ public class BarcaGUI {
 				final int tmpi = i;
 				final int tmpj = j;
 				System.out.println(" tmp i et j = "+tmpi+" "+tmpj);
+				
+				this.barcaButton[i][j].addActionListener(new ActionListener() {
+					
+					public void actionPerformed(ActionEvent arg0) {
+						System.out.println(" i ="+tmpi+" j= "+tmpj);
+						if (BarcaGUI.this.selection1.getX() == -1){
+							BarcaGUI.this.selection1.setX(tmpj);
+							BarcaGUI.this.selection1.setY(tmpi);
+							
+						}
+						else if (BarcaGUI.this.selection2.getX() == -1){
+							BarcaGUI.this.selection2.setX(tmpj);
+							BarcaGUI.this.selection2.setY(tmpi);
+							
+						}
+						
+					}
+				});
+				
 				barcaCases[i][j].add(barcaButton[i][j], gbc);
 				EventQueue.invokeLater(new Runnable() {
 					
@@ -227,13 +254,11 @@ public class BarcaGUI {
 							public void componentResized(ComponentEvent e){		
 
 									Dimension size = barcaCases[tmpi][tmpj].getSize();
-									System.out.println("La taille est de ::"+size);
 									
 									
 									barcaButton[tmpi][tmpj].setSize(size);
 									size = barcaButton[tmpi][tmpj].getSize();
 
-									System.out.println("La taille est de ::"+size);
 
 	//								Insets insets = barcaButton[tmpi][tmpj].getInsets();
 	//								size.width -= insets.left + insets.right;

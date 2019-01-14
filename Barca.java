@@ -39,6 +39,8 @@ public class Barca {
 		gui.paintMarre(config);
 		gui.barcaFrame.setVisible(true);
 		PartieBarca game = new PartieBarca(config);
+		game.runGame(gui);
+		
 		
 	}
 }

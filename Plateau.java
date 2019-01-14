@@ -219,6 +219,7 @@ public class Plateau {
 		    Coordonnees key = entry.getKey();
 		    Pion value = entry.getValue();
 		    this.cases[key.getX()][key.getY()].setPion(value);
+		    System.out.println("le pion est"+value.Type+" en position "+key.getX()+" "+key.getY()+" de couleur "+value.getCol());
 		}
 	}
 	/**

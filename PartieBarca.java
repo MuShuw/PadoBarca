@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class PartieBarca {
 	private Plateau plateau;
@@ -177,6 +178,53 @@ public class PartieBarca {
 		if ( this.AlaMain == "Noir") return "Blanc";
 		else return "Noir";
 	}
+	
+	public String runGame(BarcaGUI gui){
+		Coordonnees selection1 = gui.selection1;
+		Coordonnees selection2 = gui.selection2; 
+		int xd = 0, yd = 0, xa = 0, ya = 0;
+		this.AlaMain = "Blanc";
+		while(!this.GameOver){
+			System.out.println(" A la main = "+this.AlaMain);
+
+			do{
+//				System.out.println("Veuillez tapez les coordonées de départ et d'arrivée ( col lin col lin )\n");
+				selection1.setX(-1);
+				selection2.setX(-1);
+				while(selection2.getX() == -1){
+					try {
+						TimeUnit.SECONDS.sleep(3);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					System.out.println(" "+selection1.getX()+" "+selection1.getY());
+					if ( selection1.getX() != -1){
+						xd = selection1.getX();
+						yd = selection1.getY();
+						System.out.println(" passssssssse");
+					}
+					System.out.println(" "+selection2.getX()+" "+selection2.getY());
+
+					if ( selection2.getX() != -1){
+						xa = selection2.getX();
+						ya = selection2.getY();
+					}
+//					System.out.println(xd+" "+yd+" "+xa+" "+ya+" ");
+				}
+//				System.out.println(xd+" "+yd+" "+xa+" "+ya+" ");
+			}while(!moveFromTo(xd, yd, xa, ya, this.AlaMain));
+			// rafraichissement de la liste des pions
+			if ( this.AlaMain == "Noir") this.AlaMain = "Blanc";
+			else this.AlaMain = "Noir";
+			this.GameOver=didSmnWon();
+			this.plateau.printASCII();
+		}
+		if ( this.AlaMain == "Noir") return "Blanc";
+		else return "Noir";
+	}
+	
+	
 	public boolean didSmnWon(){
 		int blanc = 0, noir = 0;
 		System.out.println("********* "+this.plateau.pionSurMarre());
