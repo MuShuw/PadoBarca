@@ -395,25 +395,32 @@ public class Plateau {
 		System.out.println(""+xd+" "+yd);
 		Pion VeutBouger = this.cases[yd][xd].getPion();
 		if ( VeutBouger == null ) System.out.println("merde");
-
+		int count = 0;
 		int DirectionY;
 		int DirectionX;
-		if ( ( ya - yd) != 0) DirectionY = (ya - yd)/Math.abs(ya - yd);
+		if ( ( ya - yd) != 0) {
+			count = Math.abs(ya - yd);
+			DirectionY = (ya - yd)/count;
+		}
 		else DirectionY = 0;
 
-		if ( ( xa - xd) != 0) DirectionX = (xa - xd)/Math.abs(xa - xd);
+		if ( ( xa - xd) != 0){
+			count = Math.abs(xa - xd);
+			DirectionX = (xa - xd)/count;
+		}
 		else DirectionX = 0;
 		
 		// On va commencer par la première case de son déplacement
 		int i = xd+DirectionX, j = yd+DirectionY;
-		if ( isRoadBlocked(j, i, VeutBouger) ) return false;
-		
+		if ( this.cases[j][i].contientPion() || isRoadBlocked(j, i, VeutBouger) ) return false;
+		count --;
 		// Puis on va tester toutes les cases à venir
-		while ( ( DirectionX !=0 && i != xa ) || ( DirectionY != 0 &&j != ya) ){
+		while ( ( DirectionX !=0 && count >= 0 ) || ( DirectionY != 0 && count >= 0 ) ){
 			if ( this.cases[j][i].contientPion() || isRoadBlocked(j, i, VeutBouger) ){
 				return false;
 			}
 			i += DirectionX; j += DirectionY;
+			count --;
 		}
 		return true;
 	}
@@ -423,7 +430,7 @@ public class Plateau {
 		return isRoadBlocked(x, y, pion);
 	}
 	private boolean isRoadBlocked(int x, int y, Pion pion){
-		System.out.println("premier check :"+x+" "+y);
+		System.out.println("premier check -------------------------------------------------- :"+x+" "+y);
 		for ( int i = - 1 ; i < 2; i++){
 			for ( int j = -1 ; j < 2; j++ ){
 				if ( ( (x+j) < 0 || (x+j) >= getLarg() ) || // new X hors du plateau ?
@@ -671,4 +678,3 @@ public class Plateau {
 		
 	}
 }
-

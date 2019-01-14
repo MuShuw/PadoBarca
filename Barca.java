@@ -15,12 +15,18 @@ public class Barca {
 		try {
 			x = Integer.parseInt(args[0]);
 			y = Integer.parseInt(args[1]);
+			System.out.println(x);
+			System.out.println(y);
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
 		Config config;
-		if ( x%2 != 0 || y%2 != 0 || x < 6 || y < 6 || x > 20 || y > 20 ) config = new Config(x, y);
+		if( x%2 == 0 && y%2 == 0 && x >= 6 && y >= 6 && x <= 20 && y <= 20 ) config = new Config(x, y);
+		else if( (x%2 != 0 || x < 6 || x > 20) && (y%2 != 0 || y < 6 || y > 20)) config = new Config();
+		else if ( x%2 != 0 || x < 6 || x > 20 ) config = new Config(10, y);
+		else if ( y%2 != 0 || y < 6 || y > 20) config = new Config(x, 10);
 		else config = new Config();
+
 		
 		// lancement de l'interface
 		
