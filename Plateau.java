@@ -224,7 +224,7 @@ public class Plateau {
 	/**
 	 * Cette methode cherche touts les pions noirs
 	 */
-	private void trackNoir() {
+	public void trackNoir() {
 		int k = 0;
 		for ( int i = 0; i < this.Larg; i++) {
 			for ( int j = 0; j < this.Haut; j++) {
@@ -232,13 +232,12 @@ public class Plateau {
 					PionNoirs[k++] = this.cases[j][i]; 
 				}
 			}
-			System.out.println(" ");
 		}
 	}
 	/**
 	 * Cette methode cherche touts les pions noirs
 	 */
-	private void trackBlanc() {
+	public void trackBlanc() {
 		int k = 0;
 		for ( int i = 0; i < this.Larg; i++) {
 			for ( int j = 0; j < this.Haut; j++) {
@@ -246,7 +245,6 @@ public class Plateau {
 					PionBlancs[k++] = this.cases[j][i]; 
 				}
 			}
-			System.out.println(" ");
 		}
 	}
 	// Met en place le graphe orienté des relations entre les pions
@@ -284,11 +282,27 @@ public class Plateau {
 		return Case.getPionCol();		
 	}
 	// Cette methode deplace un pion
-	public boolean movePion(Cases Depart, Cases Arrivee) {
+	public boolean movePion(Cases Depart, Cases Arrivee, String tourDeJeu) {
 		int xd=Depart.getX(), yd = Depart.getY(), xa = Arrivee.getX(), ya = Arrivee.getY();
 		if(Depart.contientPion() && !Arrivee.contientPion()) {
 			System.out.println("Contient un pion et arrivée vide");
 			Pion ToMove = Depart.getPion();
+			if ( ToMove.getCol() != tourDeJeu) {
+				System.out.println("La main est à "+tourDeJeu);
+				return false;
+			}
+			// Block pour vérifier si un pion de cette couleur est paralysé et si oui
+			// si ce pion est paralysé 
+			if ( ToMove.getCol() == "Blanc" && (!ToMove.isEtatParalysie() && isThereBPara())) {
+				System.out.println("Vous devez bouger un des pions pralysés.");
+				return false;
+			}
+			if ( ToMove.getCol() == "Noir" && (!ToMove.isEtatParalysie() && isThereNPara())) {
+				System.out.println("Vous devez bouger un des pions pralysés.");
+				return false;
+			}
+			if ( ToMove.getCol() == "Blanc" && (!ToMove.isEtatParalysie() && isThereBPara())) return false;
+
 			if ( ToMove.canMove(xd, yd, xa, ya) && emptyRoad(Depart, Arrivee)){
 				// Si il a pu bouger il est forcément sur une case o` il n'est plus
 				// paralysé
@@ -297,14 +311,83 @@ public class Plateau {
 				// TODO emprunter de la methode isRoadBlocked
 				Arrivee.setPion(Depart.getPion());
 				Depart.setPion();
+				trackBlanc();
+				trackNoir();
+				checkParalyse();
 				return true;
 			}
 		}
 		System.out.println("Mouvement impossible");
 		return false; // TODO peut-etre utile de recupere une valeur pour plus tard
 	}
-	public boolean movePion(int xd, int yd, int xa, int ya){
-		return movePion(this.cases[yd][xd], this.cases[ya][xa]);
+	public void checkParalyse() {
+		int x, y;
+		Pion pion;
+		System.out.println("init-------------");
+		for ( int i = 0 ; i < PionBlancs.length; i++){
+			x = PionBlancs[i].getX(); y = PionBlancs[i].getY();
+			pion = PionBlancs[i].getPion();
+			if ( checkVoisinParal(y, x, pion)){
+				pion.setEtatParalysie(true);
+			}else{
+				pion.setEtatParalysie(false);
+			}
+		}
+		System.out.println("forr blacccc -----00");
+		for ( int i = 0 ; i < PionNoirs.length; i++){
+			System.out.println(" In check for black");
+			pion = PionNoirs[i].getPion();
+			x = PionNoirs[i].getX(); y = PionNoirs[i].getY();
+			if ( checkVoisinParal(y, x, pion)){
+				pion.setEtatParalysie(true);
+			}else{
+				pion.setEtatParalysie(false);
+			}
+		}
+		// TODO Auto-generated method stub
+	}
+	private boolean checkVoisinParal(int x, int y, Pion pion){
+		Pion Voisin;
+		for ( int j = -1 ; j < 2; j++ ){
+			for ( int k = -1 ; k < 2; k++){
+				System.out.println(x+" "+y);
+				if ( ( (x+j) < 0 || (x+j) >= getLarg() ) || // new X hors du plateau ?
+						( (y+k) < 0 || (y+k) >= getHaut() ) ) { // new y hors du plateau ?
+					System.out.println(pion.Type+" "+pion.Col+" "+(x+j)+" "+(y+k)+" ");
+				}
+				else if ( this.cases[x+j][y+k].contientPion() ){
+					System.out.println("-----------------------------------------------------------------");
+//					System.out.println("CHECCCCCCK :::::::::: "+(x+j)+" :::::::: "+(y+k)+ " "
+//							+this.cases[x+j][y+k].getPionCol()+" "
+//							+this.cases[x+j][y+k].getPion().Type
+//							+" "+pion.Col+" "+pion.Type);
+					Voisin = this.cases[x+j][y+k].getPion();
+					if ( Voisin.getParalyse().getBloque().getType() == pion.getType() &&
+							Voisin.getCol() != pion.getCol()
+							){
+						System.out.println("Passe le true dans check voiin------------------------------------------");
+						System.out.println(" "+ Voisin.getCol()+" "+Voisin.getType());
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	private boolean isThereBPara(){
+		for ( int i = 0 ; i < this.PionBlancs.length; i++){
+			if (this.PionBlancs[i].getPion().isEtatParalysie()) return true;
+		}
+		return false;
+	}
+	private boolean isThereNPara(){
+		for ( int i = 0 ; i < this.PionNoirs.length; i++){
+			if (this.PionNoirs[i].getPion().isEtatParalysie()) return true;
+		}
+		return false;
+	}
+	public boolean movePion(int xd, int yd, int xa, int ya, String tourDeJeu){
+		return movePion(this.cases[yd][xd], this.cases[ya][xa], tourDeJeu);
 	}
 	public boolean emptyRoad(Cases Depart, Cases Arrivee){
 		int xd=Depart.getX(), yd = Depart.getY(), xa = Arrivee.getX(), ya = Arrivee.getY();
@@ -319,11 +402,9 @@ public class Plateau {
 		int DirectionX;
 		if ( ( ya - yd) != 0) DirectionY = (ya - yd)/Math.abs(ya - yd);
 		else DirectionY = 0;
-		System.out.println("La direction sur y est: "+DirectionY);
 
 		if ( ( xa - xd) != 0) DirectionX = (xa - xd)/Math.abs(xa - xd);
 		else DirectionX = 0;
-		System.out.println("La direction sur x est: "+DirectionX);
 		
 		// On va commencer par la première case de son déplacement
 		int i = xd+DirectionX, j = yd+DirectionY;
@@ -335,8 +416,6 @@ public class Plateau {
 				return false;
 			}
 			i += DirectionX; j += DirectionY;
-			System.out.println("La direction sur x est: "+DirectionX);
-			System.out.println("La direction sur y est: "+DirectionY);
 		}
 		return true;
 	}
@@ -376,7 +455,17 @@ public class Plateau {
 		return false;
 	}	
 	
-	
+	public int pionSurMarre(){
+		int blanc = 0, noir = 0;
+		for ( int i = 0 ; i < this.PionBlancs.length; i++){
+			if ( this.PionBlancs[i].isMarre() ) blanc++;
+		}
+		for ( int i = 0 ; i < this.PionNoirs.length; i++){
+			if ( this.PionNoirs[i].isMarre() ) noir++;
+		}
+		if ( noir >= blanc) return noir;
+		return blanc;
+	}
 	
 	/** 
 	 * Classe interne Cases contenant les infos sur une case d'un plateau
@@ -442,34 +531,34 @@ public class Plateau {
 		 * Si l'un de ces arguments est null  appelle setPion() => pion = null
 		 * autrement elle cree un pion du type et de la couleur donnees
 		 */
-		public void setPion(int type, String col) {
-			if ( type == 0 || col == null ) { // TODO voir pourquoi int can't == null
-				// ca me peut me poser probleme
-				setPion();
-			}else {
-				/*
-				 *  ici je dois mettre un switch pour le type de pion
-				 *  1 : elephant
-				 *  2 : lion
-				 *  3 : souris
-				 */
-				switch(type) {
-				case 1 :
-					this.pion = new Elephant(col);
-					break;
-				case 2 :
-					this.pion = new Lion(col);
-					break;
-				case 3 :
-					this.pion = new Souris(col);
-					break;
-				default :
-					System.out.print("DAAAAMN!"); // TODO repenser cette partie
-					break;
-				}
-			}
-		}
-		// 
+//		public void setPion(int type, String col) {
+//			if ( type == 0 || col == null ) { // TODO voir pourquoi int can't == null
+//				// ca me peut me poser probleme
+//				setPion();
+//			}else {
+//				/*
+//				 *  ici je dois mettre un switch pour le type de pion
+//				 *  1 : elephant
+//				 *  2 : lion
+//				 *  3 : souris
+//				 */
+//				switch(type) {
+//				case 1 :
+//					this.pion = new Elephant(col);
+//					break;
+//				case 2 :
+//					this.pion = new Lion(col);
+//					break;
+//				case 3 :
+//					this.pion = new Souris(col);
+//					break;
+//				default :
+//					System.out.print("DAAAAMN!"); // TODO repenser cette partie
+//					break;
+//				}
+//			}
+//		}
+//		// 
 		public void setPion(Pion pion) {
 			this.pion = pion;
 		}
@@ -536,7 +625,6 @@ public class Plateau {
 		System.out.println(MonPlateau.cases[2][3].getPion());
 		System.out.print((10-1)/2);
 		System.out.print(MonPlateau.cases[0][3].getPionCol());
-		MonPlateau.movePion(5, 1, 6, 3);
 		MonPlateau.printPlateau();
 		MonPlateau.trackBlanc();
 		System.out.print(MonPlateau.PionBlancs.length);

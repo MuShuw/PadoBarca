@@ -4,13 +4,14 @@ public class PartieBarca {
 	private Plateau plateau;
 //	private Player noir;
 //	private Player blanc;
-//	private Player AlaMain;
+	private String AlaMain;
 	private IA bot;
-	private boolean GameOver = false;
+	private boolean GameOver;
 	
 	
 	public PartieBarca(Config config) {
 		setPlateau(new Plateau(config));
+		this.GameOver = false;
 		
 		
 		// TODO Auto-generated constructor stub
@@ -155,20 +156,36 @@ public class PartieBarca {
 
 	private String runGame(Scanner scan){
 		int xd, yd, xa, ya;
-		do{
-			System.out.println("Veuillez tapez les coordonées de départ et d'arrivée ( col lin col lin )\n");
-			yd = scan.nextInt();
-			xd = scan.nextInt();
-			ya = scan.nextInt();
-			xa = scan.nextInt();
-			System.out.println(xd+" "+yd+" "+xa+" "+ya+" ");
-		}while(!moveFromTo(xd, yd, xa, ya));
-		this.plateau.printASCII();
-		return "Plop\n";
+		this.AlaMain = "Blanc";
+		while(!this.GameOver){
+			System.out.println(" A la main = "+this.AlaMain);
+
+			do{
+				System.out.println("Veuillez tapez les coordonées de départ et d'arrivée ( col lin col lin )\n");
+				yd = scan.nextInt();
+				xd = scan.nextInt();
+				ya = scan.nextInt();
+				xa = scan.nextInt();
+				System.out.println(xd+" "+yd+" "+xa+" "+ya+" ");
+			}while(!moveFromTo(xd, yd, xa, ya, this.AlaMain));
+			// rafraichissement de la liste des pions
+			if ( this.AlaMain == "Noir") this.AlaMain = "Blanc";
+			else this.AlaMain = "Noir";
+			this.GameOver=didSmnWon();
+			this.plateau.printASCII();
+		}
+		if ( this.AlaMain == "Noir") return "Blanc";
+		else return "Noir";
+	}
+	public boolean didSmnWon(){
+		int blanc = 0, noir = 0;
+		System.out.println("********* "+this.plateau.pionSurMarre());
+		if ( this.plateau.pionSurMarre() >= 3 ) return true;
+		return false;
 	}
 	
-	private boolean moveFromTo(int xd, int yd, int xa, int ya){
-		return this.plateau.movePion(xd, yd, xa, ya);
+	private boolean moveFromTo(int xd, int yd, int xa, int ya, String tourDeJeu){
+		return this.plateau.movePion(xd, yd, xa, ya, tourDeJeu);
 	}
 	
 	public static void main(String[] args){

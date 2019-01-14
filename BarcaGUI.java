@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -18,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
+import java.util.Map;
 import java.util.Scanner;
 
 import javax.imageio.ImageIO;
@@ -40,7 +43,7 @@ public class BarcaGUI {
 	private static int height=500;
 	private int nrow;
 	private int ncol;
-	private JFrame barcaFrame;
+	public JFrame barcaFrame;
 	private JPanel barcaPlateau;
 	private JPanel[][] barcaCases; 
 	private BarcaCase[][] barcaButton;
@@ -96,9 +99,31 @@ public class BarcaGUI {
 //		BufferedImage invisibleIcon = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 //		return invisibleIcon;
 //	}
-	
-	
- 	public void setPawnImg(){
+	public void paintMarre(Config config){
+		Map<Coordonnees, Boolean> map = config.getPosMarre();
+		for (Map.Entry<Coordonnees, Boolean> entry : map.entrySet()) {
+		    Coordonnees key = entry.getKey();
+		    Boolean value = entry.getValue();
+		    this.barcaCases[key.getX()][key.getY()].setBackground(Color.BLUE);
+		}
+	}
+	public void setButImg(Config config){
+		int coul, piece;
+		Map<Coordonnees, Pion> map = config.getPosPions();
+		System.out.print("Plop \n");
+		for (Map.Entry<Coordonnees, Pion> entry : map.entrySet()) {
+		    Coordonnees key = entry.getKey();
+		    Pion value = entry.getValue();
+		    if ( value.getCol() == "Blanc" ) coul = 0;
+		    else coul = 1;
+		    if( value.getType() == "Elephant") piece = 0;
+		    else if( value.getType() == "Lion") piece = 1;
+		    else piece = 2;
+		    
+		    this.barcaButton[key.getX()][key.getY()].setPion(this.pions[coul][piece]);
+		}
+	}
+	public void setPawnImg(){
 		String[] imPions = {"1a.gif","1b.gif","2a.gif","2b.gif","3a.gif","3b.gif"};
 		for ( int i = 0 ; i < imPions.length; i++ ){
 			try {
@@ -127,8 +152,7 @@ public class BarcaGUI {
 		int x = config.getPlateauDim().getX(), y = config.getPlateauDim().getY(), tmpCol;
 
 		// On retire le premier plateau
-		BorderLayout bl = (BorderLayout) this.barcaFrame.getLayout();
-        this.barcaPlateau.remove(bl.getLayoutComponent(BorderLayout.CENTER));
+        this.barcaFrame.remove(this.barcaPlateau);
 
 
 		
@@ -174,7 +198,7 @@ public class BarcaGUI {
 //						);
 				// On intègre l'image dans le bouton
 					try {
-					    Image Img = this.pions[0][2];
+					    Image Img = this.invisible;
 					    System.out.println(" Passe avec le iwidthnvisible.i= "+i+" j="+j);
 					    barcaButton[i][j].setPion(Img);
 					    barcaButton[i][j].setIcon(
@@ -246,14 +270,37 @@ public class BarcaGUI {
 	public void setPawnIcons(Config config) {
 		
 	}
+	public void refreshIcon(){
+		for ( int i = 0; i < this.nrow ; i++){
+			for ( int j = 0; j < this.ncol ; j++  ){
+				Dimension size = barcaButton[i][j].getSize();
+				Image tmp = barcaButton[i][j].getPion();
+				barcaButton[i][j].setIcon(new ImageIcon (
+						tmp.getScaledInstance(
+								size.width,
+								size.height,
+								java.awt.Image.SCALE_FAST)
+								)
+						);
+			}
+		}
+	}
+ 
 	private void setSize(int width, int height) {
 		BarcaGUI.width = width;
 		BarcaGUI.height = height;		
 	}
 	public static void main(String[] args) throws InvocationTargetException, InterruptedException{
 		BarcaGUI gui = new BarcaGUI();
-		gui.setCases(new Config() );
+		Config config = new Config();
+		gui.setCases(config);
 		gui.barcaFrame.setVisible(true);
+		gui.setButImg(config);
+		gui.barcaFrame.setVisible(true);
+		System.out.print("passe \n");
+		gui.refreshIcon();
+		gui.barcaFrame.setVisible(true);
+
 //		BarcaGUI barcaGUI = new BarcaGUI();
 //		
 //		JFrame barcaFrame = new JFrame("Barca");
