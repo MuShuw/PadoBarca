@@ -1,44 +1,28 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
-import java.awt.Insets;
-import java.awt.LayoutManager;
-import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.ObjectInputStream.GetField;
+//import java.io.File;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Date;
 import java.util.Map;
-import java.util.Scanner;
 
 import javax.imageio.ImageIO;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
-import javax.swing.JToolBar;
 
 
 public class BarcaGUI {
-	private static final Object[][] BarcaCase = null;
 	private int[][] couleur = {{255, 204, 153},
 			{153, 51, 51}};
 	private Image[][] pions = new Image[2][3];
@@ -69,14 +53,14 @@ public class BarcaGUI {
 
 		// Configuration du Frame principale
 		barcaFrame = new JFrame("Barca : un jeu qui Swing !");
-		barcaFrame.setPreferredSize(new Dimension(this.width, this.height));
-		barcaFrame.setSize(this.width, this.height);
-		barcaPlateau = new JPanel(new GridLayout(this.width, this.height, 1, 1));
-		barcaPlateau.setPreferredSize(new Dimension(this.width-200,this.height)); 
+		barcaFrame.setPreferredSize(new Dimension(BarcaGUI.width, BarcaGUI.height));
+		barcaFrame.setSize(BarcaGUI.width, BarcaGUI.height);
+		barcaPlateau = new JPanel(new GridLayout(BarcaGUI.width, BarcaGUI.height, 1, 1));
+		barcaPlateau.setPreferredSize(new Dimension(BarcaGUI.width-200,BarcaGUI.height)); 
 		JPanel colDroite = new JPanel();
-		colDroite.setPreferredSize(new Dimension(100, this.height));
+		colDroite.setPreferredSize(new Dimension(100, BarcaGUI.height));
 		JPanel colGauche = new JPanel();
-		colGauche.setPreferredSize(new Dimension(100, this.height));
+		colGauche.setPreferredSize(new Dimension(100, BarcaGUI.height));
 		barcaFrame.add(colDroite, BorderLayout.EAST);
 		barcaFrame.add(colGauche, BorderLayout.WEST);
 
@@ -110,7 +94,6 @@ public class BarcaGUI {
 		Map<Coordonnees, Boolean> map = config.getPosMarre();
 		for (Map.Entry<Coordonnees, Boolean> entry : map.entrySet()) {
 		    Coordonnees key = entry.getKey();
-		    Boolean value = entry.getValue();
 		    this.barcaCases[key.getX()][key.getY()].setBackground(Color.BLUE);
 		}
 	}
@@ -134,8 +117,8 @@ public class BarcaGUI {
 		String[] imPions = {"1a.gif","1b.gif","2a.gif","2b.gif","3a.gif","3b.gif"};
 		for ( int i = 0 ; i < imPions.length; i++ ){
 			try {
-			    File fileImg = new File("pawns/"+imPions[i]);
-			    Image Img = ImageIO.read(fileImg);
+//			    File fileImg = new File("pawns/"+imPions[i]);
+			    Image Img = ImageIO.read(getClass().getResourceAsStream("pawns/"+imPions[i]));
 			    System.out.println(" La type est :" +i%3+" et l'image est "+imPions[i]);
 			    pions[i%2][i%3] = Img.getScaledInstance(Img.getWidth(null), -1, Image.SCALE_SMOOTH);
 			  } catch (Exception ex) {
@@ -144,8 +127,8 @@ public class BarcaGUI {
 		}
 		// Creation de l'image pour les icons invisibles
 		try {
-		    File fileImg = new File("pawns/invisible.gif");
-		    invisible = ImageIO.read(fileImg);
+//		    File fileImg = new File("pawns/invisible.gif");
+		    invisible = ImageIO.read(getClass().getResourceAsStream("pawns/invisible.gif"));
 		  } catch (Exception ex) {
 		    System.out.println("Problem Invisible");
 		  }
@@ -311,6 +294,7 @@ public class BarcaGUI {
 		}
 	}
  
+	@SuppressWarnings("unused")
 	private void setSize(int width, int height) {
 		BarcaGUI.width = width;
 		BarcaGUI.height = height;		

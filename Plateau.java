@@ -156,7 +156,7 @@ public class Plateau {
 	/** 
 	 * Getter et setter des attributs du plateau
 	 */
-	@SuppressWarnings("unused")
+	
 	// TODO remettre en privé
 	public Cases[][] getCases() {
 		return cases;
@@ -420,6 +420,7 @@ public class Plateau {
 		}
 		return true;
 	}
+	@SuppressWarnings("unused")
 	private boolean isRoadBlocked(Cases Check, Pion pion){
 		int x=Check.getX(), y = Check.getY();
 		return isRoadBlocked(x, y, pion);

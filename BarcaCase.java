@@ -1,4 +1,3 @@
-import java.awt.Dimension;
 import java.awt.Image;
 
 import javax.swing.Action;
@@ -7,6 +6,10 @@ import javax.swing.JButton;
 
 
 public class BarcaCase extends JButton {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	Image pion;
 	Coordonnees coord;
 	String strPion;

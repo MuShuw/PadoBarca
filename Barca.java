@@ -1,8 +1,8 @@
 
 public class Barca {
-	private BarcaGUI gui;
-	private PartieBarca game;
-	
+//	private BarcaGUI gui;
+//	private PartieBarca game;
+//	
 	private Barca(){
 		
 	}

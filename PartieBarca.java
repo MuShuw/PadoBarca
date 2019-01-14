@@ -71,14 +71,14 @@ public class PartieBarca {
 	public void setBot(IA bot) {
 		this.bot = bot;
 	}
-	
-	private boolean isGameOver() {
-		return GameOver;
-	}
-
-	private void setGameOver(boolean gameOver) {
-		GameOver = gameOver;
-	}
+//	
+//	private boolean isGameOver() {
+//		return GameOver;
+//	}
+//
+//	private void setGameOver(boolean gameOver) {
+//		GameOver = gameOver;
+//	}
 
 	
 	/**
@@ -226,7 +226,6 @@ public class PartieBarca {
 	
 	
 	public boolean didSmnWon(){
-		int blanc = 0, noir = 0;
 		System.out.println("********* "+this.plateau.pionSurMarre());
 		if ( this.plateau.pionSurMarre() >= 3 ) return true;
 		return false;
